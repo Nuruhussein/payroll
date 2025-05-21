@@ -24,4 +24,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+    
+    // Route::resource('payrolls', \App\Http\Controllers\PayrollController::class);
+    // Route::resource('transactions', \App\Http\Controllers\TransactionController::class);
+});
+
 require __DIR__.'/auth.php';
