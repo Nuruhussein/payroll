@@ -3,6 +3,7 @@ import Dashboard from "../Dashboard"
 export default ({employees}) => {
 
 
+    console.log(employees)
 
     return (
         <Dashboard>
