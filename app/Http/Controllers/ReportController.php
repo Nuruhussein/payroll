@@ -3,12 +3,77 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payroll;
+use App\Models\Transaction;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
+    /**
+     * Display monthly payroll report.
+     */
+    public function index(Request $request)
+    {
+        // Get the month from query parameter, default to current month
+        $month = $request->query('month', now()->format('Y-m'));
+
+        // Validate month format (YYYY-MM)
+        if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
+            $month = now()->format('Y-m');
+        }
+
+        // Load payrolls for the selected month with employee data
+        $payrolls = Payroll::with([
+            'employee' => function ($query) {
+                $query->select('id', 'name', 'employment_date', 'basic_salary');
+            }
+        ])
+            ->where('month', $month)
+            ->get();
+
+        // Get available months for dropdown
+        $availableMonths = Payroll::select('month')
+            ->distinct()
+            ->orderBy('month', 'desc')
+            ->pluck('month')
+            ->toArray();
+
+        // Ensure current month is included if no payrolls exist
+        if (empty($availableMonths) && !in_array($month, $availableMonths)) {
+            $availableMonths[] = $month;
+        }
+
+        // Calculate total funding (static initial funding minus completed transactions for the month)
+        $initialFunding = 10000000; // Adjust as needed
+        $completedFunding = Transaction::where('status', 'completed')
+            ->whereIn('payroll_id', $payrolls->pluck('id'))
+            ->selectRaw('SUM(amount + COALESCE(tax_amount, 0)) as total')
+            ->value('total') ?? 0;
+        $totalFunding = $initialFunding - $completedFunding;
+
+        // Log data for debugging
+        Log::info('Payroll report data', [
+            'month' => $month,
+            'payrolls_count' => $payrolls->count(),
+            'available_months' => $availableMonths,
+            'total_funding' => $totalFunding,
+            'completed_funding' => $completedFunding,
+        ]);
+
+        return Inertia::render('Report/Index', [
+            'payrolls' => $payrolls,
+            'selectedMonth' => $month,
+            'availableMonths' => $availableMonths,
+            'totalFunding' => $totalFunding,
+        ]);
+    }
+
+    /**
+     * Export payroll report for the specified month.
+     */
     public function export(string $month, string $format = 'excel')
     {
         $payrolls = Payroll::where('month', $month)->with('employee')->get();

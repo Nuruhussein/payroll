@@ -1,96 +1,172 @@
-import Dashboard from "../Dashboard"
+import React from 'react';
+import Dashboard from '../Dashboard';
+import { router } from '@inertiajs/react';
 
-export default () => {
+export default function ReportIndex({ payrolls, selectedMonth, availableMonths, totalFunding }) {
+   
+    const format = (num) =>
+        Number(num).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-    const tableItems = [
-        {
-            name: "Liam James",
-            email: "liamjames@example.com",
-            position: "Software engineer",
-            salary: "$100K"
+   
+    const handleMonthChange = (e) => {
+        const month = e.target.value;
+        router.get(route('Report.index'), { month }, { preserveState: true, replace: true });
+    };
+
+
+    const handleExport = (format) => {
+        window.location.href = route('Report.export', { month: selectedMonth, format });
+    };
+
+
+
+    
+    const totals = payrolls.reduce(
+        (acc, p) => {
+            acc.earned_salary += Number(p.earned_salary);
+            acc.position_allowance += Number(p.position_allowance);
+            acc.transport_allowance += Number(p.transport_allowance);
+            acc.other_commission += Number(p.other_commission);
+            acc.gross_pay += Number(p.gross_pay);
+            acc.taxable_income += Number(p.taxable_income);
+            acc.income_tax += Number(p.income_tax);
+            acc.employee_pension += Number(p.employee_pension);
+            acc.employer_pension += Number(p.employer_pension);
+            acc.total_deduction += Number(p.total_deduction);
+            acc.net_payment += Number(p.net_payment);
+            return acc;
         },
         {
-            name: "Olivia Emma",
-            email: "oliviaemma@example.com",
-            position: "Product designer",
-            salary: "$90K"
-        },
-        {
-            name: "William Benjamin",
-            email: "william.benjamin@example.com",
-            position: "Front-end developer",
-            salary: "$80K"
-        },
-        {
-            name: "Henry Theodore",
-            email: "henrytheodore@example.com",
-            position: "Laravel engineer",
-            salary: "$120K"
-        },
-        {
-            name: "Amelia Elijah",
-            email: "amelia.elijah@example.com",
-            position: "Open source manager",
-            salary: "$75K"
-        },
-    ]
+            earned_salary: 0,
+            position_allowance: 0,
+            transport_allowance: 0,
+            other_commission: 0,
+            gross_pay: 0,
+            taxable_income: 0,
+            income_tax: 0,
+            employee_pension: 0,
+            employer_pension: 0,
+            total_deduction: 0,
+            net_payment: 0,
+        }
+    );
+
+    console.log('Report/Index.jsx props:', { payrolls, selectedMonth, availableMonths, totalFunding });
 
     return (
         <Dashboard>
-        <div className="max-w-6xl ml-80   px-4 md:px-8">
-            <div className="items-start justify-between md:flex">
-                <div className="max-w-lg">
-                    <h3 className="text-gray-800 text-xl font-bold sm:text-2xl">
-                        Team members
-                    </h3>
-                    <p className="text-gray-600 mt-2">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    </p>
+            <div className="max-w-6xl ml-64 px-4 md:px-0">
+                <div className="mb-4">
+                    <h1 className="text-2xl font-semibold">Monthly Payroll Report</h1>
+                    <p className="text-sm text-gray-600 mt-1">Payroll details for the selected month</p>
                 </div>
-                <div className="mt-3 md:mt-0">
-                    <a
-                        href="javascript:void(0)"
-                        className="inline-block px-4 py-2 text-white duration-150 font-medium bg-indigo-600 rounded-lg hover:bg-indigo-500 active:bg-indigo-700 md:text-sm"
-                    >
-                        Add member
-                    </a>
-                </div>
-            </div>
-            <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
-                <table className="w-full table-auto text-sm text-left">
-                    <thead className="bg-gray-50 text-gray-600 font-medium border-b">
-                        <tr>
-                            <th className="py-3 px-6">Username</th>
-                            <th className="py-3 px-6">Email</th>
-                            <th className="py-3 px-6">Position</th>
-                            <th className="py-3 px-6">Salary</th>
-                            <th className="py-3 px-6"></th>
 
-                        </tr>
-                    </thead>
-                    <tbody className="text-gray-600 divide-y">
-                        {
-                            tableItems.map((item, idx) => (
-                                <tr key={idx}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.position}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.salary}</td>
-                                    <td className="text-right px-6 whitespace-nowrap">
-                                        <a href="javascript:void()" className="py-2 px-3 font-medium text-indigo-600 hover:text-indigo-500 duration-150 hover:bg-gray-50 rounded-lg">
-                                            Edit
-                                        </a>
-                                        <button href="javascript:void()" className="py-2 leading-none px-3 font-medium text-red-600 hover:text-red-500 duration-150 hover:bg-gray-50 rounded-lg">
-                                            Delete
-                                        </button>
-                                    </td>
+                <div className="mb-4 flex items-center space-x-4">
+                    <div>
+                        <label htmlFor="month" className="block text-sm font-medium text-gray-700">
+                            Select Month
+                        </label>
+                        <select
+                            id="month"
+                            value={selectedMonth}
+                            onChange={handleMonthChange}
+                            className="mt-1 block w-48 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        >
+                            {availableMonths.map((month) => (
+                                <option key={month} value={month}>
+                                    {new Date(month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={() => handleExport('excel')}
+                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                        >
+                            Export to Excel
+                        </button>
+                        <button
+                            onClick={() => handleExport('pdf')}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        >
+                            Export to PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div className="mb-4">
+                    <p className="text-sm text-gray-500">Total Company Funding</p>
+                    <p className="text-2xl font-bold text-gray-900">${format(totalFunding)}</p>
+                </div>
+
+                <div className="p-4 overflow-x-auto bg-white rounded-lg shadow-md">
+                    {payrolls.length === 0 ? (
+                        <div className="p-6 text-center text-gray-600">
+                            No payroll data found for {new Date(selectedMonth + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}.
+                        </div>
+                    ) : (
+                        <table className="min-w-[1200px] text-sm border border-gray-300">
+                            <thead className="bg-gray-100 text-gray-700 text-xs">
+                                <tr className="border-b border-gray-300">
+                                    <th className="px-2 py-1 text-left">No.</th>
+                                    <th className="px-2 py-1 text-left">Employee Name</th>
+                                    <th className="px-2 py-1 text-center">Basic Salary</th>
+                                    <th className="px-2 py-1 text-center">W/Days</th>
+                                    <th className="px-2 py-1 text-center">Earned Salary</th>
+                                    <th className="px-2 py-1 text-center">Position Allowance</th>
+                                    <th className="px-2 py-1 text-center">Transport Allowance</th>
+                                    <th className="px-2 py-1 text-center">Other</th>
+                                    <th className="px-2 py-1 text-center">Gross Pay</th>
+                                    <th className="px-2 py-1 text-center">Taxable Income</th>
+                                    <th className="px-2 py-1 text-center">Income Tax</th>
+                                    <th className="px-2 py-1 text-center">Pension (E)</th>
+                                    <th className="px-2 py-1 text-center">Pension (ER)</th>
+                                    <th className="px-2 py-1 text-center">Total Deduction</th>
+                                    <th className="px-2 py-1 text-center">Net Payment</th>
                                 </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody className="text-gray-800">
+                                {payrolls.map((p, i) => (
+                                    <tr key={p.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                        <td className="px-2 py-1">{i + 1}</td>
+                                        <td className="px-2 py-1">{p.employee?.name || ''}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.employee?.basic_salary || 0)}</td>
+                                        <td className="px-2 py-1 text-center">{p.working_days}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.earned_salary)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.position_allowance)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.transport_allowance)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.other_commission)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.gross_pay)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.taxable_income)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.income_tax)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.employee_pension)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.employer_pension)}</td>
+                                        <td className="px-2 py-1 text-right">{format(p.total_deduction)}</td>
+                                        <td className="px-2 py-1 text-right font-semibold text-green-700">{format(p.net_payment)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                            <tfoot className="bg-gray-100 font-semibold">
+                                <tr className="border-t border-gray-300">
+                                    <td colSpan={4} className="px-2 py-1 text-right">Total</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.earned_salary)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.position_allowance)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.transport_allowance)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.other_commission)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.gross_pay)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.taxable_income)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.income_tax)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.employee_pension)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.employer_pension)}</td>
+                                    <td className="px-2 py-1 text-right">{format(totals.total_deduction)}</td>
+                                    <td className="px-2 py-1 text-right text-green-700">{format(totals.net_payment)}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    )}
+                </div>
             </div>
-        </div>
         </Dashboard>
-    )
+    );
 }
