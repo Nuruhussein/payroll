@@ -12,7 +12,10 @@ class PayrollController extends Controller
      */
     public function index()
     {
-        //
+        $payrolls = Payroll::all();
+        return inertia('Payroll/Index', [
+            'payrolls' => $payrolls,
+        ]);
     }
 
     /**
