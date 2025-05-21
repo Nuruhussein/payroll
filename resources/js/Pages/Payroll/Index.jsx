@@ -6,14 +6,14 @@ export default ({payrolls}) => {
         <Dashboard>
         <div className="max-w-5xl ml-60   px-4 md:px-8">
             <div className="items-start justify-between md:flex">
-                <div className="max-w-lg">
+                {/* <div className="max-w-lg">
                     <h3 className="text-gray-800 text-xl font-bold sm:text-2xl">
                         Team members
                     </h3>
                     <p className="text-gray-600 mt-2">
                         Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                     </p>
-                </div>
+                </div> */}
                 <div className="mt-3 md:mt-0">
                     <a
                         href="javascript:void(0)"

@@ -24,8 +24,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+Route::get('/employees/create', [\App\Http\Controllers\EmployeeController::class, 'create'])->name('employees.create');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('employees', \App\Http\Controllers\EmployeeController::class)->except(['create']);
     Route::resource('Payroll', \App\Http\Controllers\PayrollController::class);
     Route::resource('Transaction', \App\Http\Controllers\TransactionController::class);
 });
