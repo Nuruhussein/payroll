@@ -28,7 +28,7 @@
 
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import Sidebar from "@/Components/Sidebar";
+import Sidebar from "@/Layouts/Sidebar";
 import { Head } from "@inertiajs/react";
 
 
