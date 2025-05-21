@@ -14,6 +14,7 @@ class TransactionController extends Controller
     {
       return inertia('employee/Index', [
             
+        
         ]);
     }
 

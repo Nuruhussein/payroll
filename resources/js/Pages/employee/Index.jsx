@@ -34,6 +34,10 @@ export default ({employees}) => {
                             <th className="py-3 px-6">Email</th>
                             <th className="py-3 px-6">Position</th>
                             <th className="py-3 px-6">Salary</th>
+                              <th className="py-3 px-6">bank account</th>
+                            <th className="py-3 px-6">position</th>
+
+
                             <th className="py-3 px-6"></th>
 
                         </tr>
@@ -46,6 +50,10 @@ export default ({employees}) => {
                                     <td className="px-6 py-4 whitespace-nowrap">{item.gender}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{item.position}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{item.basic_salary}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{item.bank_account_number}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{item.position}</td>
+
+
                                     <td className="text-right px-6 whitespace-nowrap">
                                         <a href="javascript:void()" className="py-2 px-3 font-medium text-indigo-600 hover:text-indigo-500 duration-150 hover:bg-gray-50 rounded-lg">
                                             Edit
