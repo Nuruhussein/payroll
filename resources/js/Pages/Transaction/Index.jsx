@@ -1,3 +1,4 @@
+
 import Dashboard from "../Dashboard"
 
 export default () => {
@@ -38,58 +39,137 @@ export default () => {
     return (
         <Dashboard>
         <div className="max-w-6xl ml-80   px-4 md:px-8">
-            <div className="items-start justify-between md:flex">
-                <div className="max-w-lg">
-                    <h3 className="text-gray-800 text-xl font-bold sm:text-2xl">
-                        Team members
-                    </h3>
-                    <p className="text-gray-600 mt-2">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    </p>
-                </div>
-                <div className="mt-3 md:mt-0">
-                    <a
-                        href="javascript:void(0)"
-                        className="inline-block px-4 py-2 text-white duration-150 font-medium bg-indigo-600 rounded-lg hover:bg-indigo-500 active:bg-indigo-700 md:text-sm"
-                    >
-                        Add member
-                    </a>
-                </div>
-            </div>
-            <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
-                <table className="w-full table-auto text-sm text-left">
-                    <thead className="bg-gray-50 text-gray-600 font-medium border-b">
-                        <tr>
-                            <th className="py-3 px-6">Username</th>
-                            <th className="py-3 px-6">Email</th>
-                            <th className="py-3 px-6">Position</th>
-                            <th className="py-3 px-6">Salary</th>
-                            <th className="py-3 px-6"></th>
+            <div class="mb-6">
+    <h1 class="text-2xl font-semibold">Transaction details for Jan. 29, 2020</h1>
+    <p class="text-sm text-gray-600 mt-1">
+      For <span class="text-blue-600 font-medium">Jan. 16 – Jan. 31, 2020 payroll</span> with payday Jan. 31, 2020
+    </p>
+  </div>
 
-                        </tr>
-                    </thead>
-                    <tbody className="text-gray-600 divide-y">
-                        {
-                            tableItems.map((item, idx) => (
-                                <tr key={idx}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.position}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.salary}</td>
-                                    <td className="text-right px-6 whitespace-nowrap">
-                                        <a href="javascript:void()" className="py-2 px-3 font-medium text-indigo-600 hover:text-indigo-500 duration-150 hover:bg-gray-50 rounded-lg">
-                                            Edit
-                                        </a>
-                                        <button href="javascript:void()" className="py-2 leading-none px-3 font-medium text-red-600 hover:text-red-500 duration-150 hover:bg-gray-50 rounded-lg">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-            </div>
+  <div class="bg-white shadow-sm rounded-md p-6 mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <div>
+      <p class="text-sm text-gray-500">Amount</p>
+      <p class="text-2xl font-bold text-gray-900">$5,050.00</p>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">Withdrawal date</p>
+      <p class="text-gray-900 mt-1">January 29, 2020</p>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">Funding account</p>
+    </div>
+    <div class="flex items-center">
+      <span class="bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">Scheduled</span>
+    </div>
+  </div>
+
+  <div class="mb-8">
+    <h2 class="text-lg font-semibold mb-3">For your team</h2>
+    <div class="overflow-auto bg-white shadow-sm rounded-md">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100 text-sm text-gray-600 text-left">
+          <tr>
+            <th class="px-6 py-3">Recipient</th>
+            <th class="px-6 py-3">Deposit date</th>
+            <th class="px-6 py-3">Amount</th>
+            <th class="px-6 py-3">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 text-sm">
+          <tr>
+            <td class="px-6 py-4 text-blue-600 font-medium">John Adams</td>
+            <td class="px-6 py-4">Jan 31, 2020</td>
+            <td class="px-6 py-4">$2,000.00</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Scheduled</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-blue-600 font-medium">John Macintosh</td>
+            <td class="px-6 py-4">Jan 31, 2020</td>
+            <td class="px-6 py-4">$50.00</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Scheduled</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-blue-600 font-medium">Karen Lord</td>
+            <td class="px-6 py-4">Jan 31, 2020</td>
+            <td class="px-6 py-4">$2,000.00</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Scheduled</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 text-blue-600 font-medium">Mary Lambert</td>
+            <td class="px-6 py-4">Jan 31, 2020</td>
+            <td class="px-6 py-4">$50.00</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Scheduled</span>
+            </td>
+          </tr>
+          <tr>
+
+
+<td class="px-6 py-4 text-blue-600 font-medium">Neil McAdams</td>
+            <td class="px-6 py-4">Jan 31, 2020</td>
+            <td class="px-6 py-4">$50.00</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">Scheduled</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+      <div>
+        Show: 
+        <select class="ml-2 border border-gray-300 rounded px-2 py-1">
+          <option>5</option>
+        </select>
+        per page
+      </div>
+      <div>
+        1–5 of 8
+        <button class="ml-2 text-gray-400" disabled>&rsaquo;</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h2 class="text-lg font-semibold mb-3">For your accrued taxes</h2>
+    <div class="bg-white shadow-sm rounded-md overflow-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-100 text-gray-600 text-left">
+          <tr>
+            <th class="px-6 py-3">Tax</th>
+            <th class="px-6 py-3">Due date</th>
+            <th class="px-6 py-3">Amount</th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4">IN DOR - State Income Tax Withholding</td>
+            <td class="px-6 py-4">Feb 15, 2020</td>
+            <td class="px-6 py-4">$1,500.00</td>
+            <td class="px-6 py-4">
+              <a href="#" class="text-blue-600 font-medium">Tax details</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4">IRS - Federal Income Tax Withholding</td>
+            <td class="px-6 py-4">Feb 21, 2020</td>
+            <td class="px-6 py-4">$1,500.00</td>
+            <td class="px-6 py-4">
+              <a href="#" class="text-blue-600 font-medium">Tax details</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
         </div>
         </Dashboard>
     )

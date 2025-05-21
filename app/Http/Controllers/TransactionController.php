@@ -12,9 +12,11 @@ class TransactionController extends Controller
      */
     public function index()
     {
-      return inertia('employee/Index', [
+
+
+      return inertia('Transaction/Index', [
             
-        
+
         ]);
     }
 
