@@ -1,39 +1,8 @@
 import Dashboard from "../Dashboard"
 
-export default () => {
+export default ({employees}) => {
 
-    const tableItems = [
-        {
-            name: "Liam James",
-            email: "liamjames@example.com",
-            position: "Software engineer",
-            salary: "$100K"
-        },
-        {
-            name: "Olivia Emma",
-            email: "oliviaemma@example.com",
-            position: "Product designer",
-            salary: "$90K"
-        },
-        {
-            name: "William Benjamin",
-            email: "william.benjamin@example.com",
-            position: "Front-end developer",
-            salary: "$80K"
-        },
-        {
-            name: "Henry Theodore",
-            email: "henrytheodore@example.com",
-            position: "Laravel engineer",
-            salary: "$120K"
-        },
-        {
-            name: "Amelia Elijah",
-            email: "amelia.elijah@example.com",
-            position: "Open source manager",
-            salary: "$75K"
-        },
-    ]
+
 
     return (
         <Dashboard>
@@ -70,12 +39,12 @@ export default () => {
                     </thead>
                     <tbody className="text-gray-600 divide-y">
                         {
-                            tableItems.map((item, idx) => (
+                            employees.map((item, idx) => (
                                 <tr key={idx}>
                                     <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.email}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{item.gender}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{item.position}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.salary}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{item.basic_salary}</td>
                                     <td className="text-right px-6 whitespace-nowrap">
                                         <a href="javascript:void()" className="py-2 px-3 font-medium text-indigo-600 hover:text-indigo-500 duration-150 hover:bg-gray-50 rounded-lg">
                                             Edit
