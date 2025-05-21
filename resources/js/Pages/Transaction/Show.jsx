@@ -1,53 +1,27 @@
 import React from 'react';
 import Dashboard from '../Dashboard';
-import {  usePage, useForm } from '@inertiajs/react';
+// import { InertiaLink } from '@inertiajs/react';
 
-export default function Index({ transactionDetails, transactions }) {
-    const { flash } = usePage().props;
-
-    console.log('Transaction/Index.jsx props:', { transactionDetails, transactions });
-
-    // Form for status update
-    const { data, setData, post, processing, errors } = useForm({
-        status: '',
-    });
-
-    const handleStatusChange = (transactionId, status) => {
-        post(route('Transaction.updateStatus', transactionId), {
-            data: { status },
-            onSuccess: () => {
-                setData('status', '');
-            },
-            preserveScroll: true,
-        });
-    };
+export default function Show({ transactionDetails, transactions }) {
+    console.log('Show.jsx props:', { transactionDetails, transactions });
 
     return (
         <Dashboard>
-            <div className="max-w-6xl ml-64 mx-auto px-4 md:px-8">
+            <div className="max-w-6xl ml-80 px-4 md:px-8">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-semibold">All Transactions</h1>
-                    <p className="text-sm text-gray-600 mt-1">Overview of all payroll transactions</p>
+                    <h1 className="text-2xl font-semibold">Transaction Details for {transactionDetails.withdrawal_date}</h1>
+                    <p className="text-sm text-gray-600 mt-1">
+                        For <span className="text-blue-600 font-medium">{transactionDetails.month} payroll</span> with payday {transactionDetails.payday}
+                    </p>
                 </div>
-
-                {flash?.success && (
-                    <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
-                        {flash.success}
-                    </div>
-                )}
-                {flash?.error && (
-                    <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
-                        {flash.error}
-                    </div>
-                )}
 
                 <div className="bg-white shadow-sm rounded-md p-6 mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div>
-                        <p className="text-sm text-gray-500">Total Company Funding</p>
+                        <p className="text-sm text-gray-500">Total Amount</p>
                         <p className="text-2xl font-bold text-gray-900">${transactionDetails.total_amount.toFixed(2)}</p>
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500">Latest Withdrawal Date</p>
+                        <p className="text-sm text-gray-500">Withdrawal Date</p>
                         <p className="text-gray-900 mt-1">{transactionDetails.withdrawal_date}</p>
                     </div>
                     <div>
@@ -64,7 +38,7 @@ export default function Index({ transactionDetails, transactions }) {
                     <div className="overflow-auto bg-white shadow-sm rounded-md">
                         {transactions.length === 0 ? (
                             <div className="p-6 text-center text-gray-600">
-                                No transactions found.
+                                No transactions found for this payroll.
                             </div>
                         ) : (
                             <table className="min-w-full divide-y divide-gray-200">
@@ -76,7 +50,7 @@ export default function Index({ transactionDetails, transactions }) {
                                         <th className="px-6 py-3">Tax Amount</th>
                                         <th className="px-6 py-3">Tax Authority</th>
                                         <th className="px-6 py-3">Status</th>
-                                        <th className="px-6 py-3">Actions</th>
+                                        <th className="px-6 py-3"></th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 text-sm">
@@ -90,24 +64,8 @@ export default function Index({ transactionDetails, transactions }) {
                                             <td className="px-6 py-4">
                                                 <span className="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">{transaction.status}</span>
                                             </td>
-                                            <td className="px-6 py-4 flex space-x-2">
-                                                <select
-                                                    value={data.status}
-                                                    onChange={(e) => handleStatusChange(transaction.id, e.target.value)}
-                                                    className="border border-gray-300 rounded px-2 py-1 text-sm"
-                                                    disabled={processing}
-                                                >
-                                                    <option value="">Change Status</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="completed">Completed</option>
-                                                    <option value="failed">Failed</option>
-                                                </select>
-                                                <a
-                                                    href={route('Payroll.show', transaction.payroll_id)}
-                                                    className="text-blue-600 font-medium"
-                                                >
-                                                    Details
-                                                </a>
+                                            <td className="px-6 py-4">
+                                                <a href="" className="text-blue-600 font-medium">Details</a>
                                             </td>
                                         </tr>
                                     ))}

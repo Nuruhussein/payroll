@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\TransactionController;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -34,7 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('Payroll', \App\Http\Controllers\PayrollController::class)->except(['create']);
 
-    Route::resource('Transaction', \App\Http\Controllers\TransactionController::class);
+ Route::get('/Transaction', [TransactionController::class, 'index'])->name('Transaction.index');
+    Route::get('/Transaction/{payroll}', [TransactionController::class, 'show'])->name('Transaction.show');
+    
+     Route::post('/Transaction/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('updateStatus');
 });
 
 require __DIR__.'/auth.php';

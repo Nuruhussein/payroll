@@ -28,7 +28,7 @@ class CreatePayrollsTable extends Migration
             $table->string('approved_by')->nullable();
             $table->timestamps();
 
-            $table->index(['employee_id', 'month']); // For faster queries
+            $table->index(['employee_id', 'month']); 
             // $table->checkConstraint('working_days <= 30', 'chk_working_days'); // Enforce max 30 days
         });
     }

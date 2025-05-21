@@ -17,6 +17,7 @@ class CreateTransactionsTable extends Migration
             $table->enum('type', ['salary', 'tax']); // Salary payment or tax transfer
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->integer('retry_count')->default(0);
+            
             $table->timestamps();
 
             $table->index('payroll_id');

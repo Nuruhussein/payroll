@@ -17,6 +17,7 @@ class Transaction extends Model
         'amount',
         'type',
         'status',
+         'tax_amount',
         'retry_count',
     ];
 

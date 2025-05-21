@@ -17,6 +17,9 @@ export default function Create({ employees, errors }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+  
+    
+
     router.post(route('Payroll.store'), form);
   };
 
