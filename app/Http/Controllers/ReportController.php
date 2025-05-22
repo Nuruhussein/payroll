@@ -12,26 +12,25 @@ use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
-    /**
-     * Display monthly payroll report.
-     */
-
-public function dashboard(Request $request)
+    public function dashboard(Request $request)
     {
         $month = $request->input('month', now()->format('Y-m'));
         $previousMonth = now()->subMonth()->format('Y-m');
 
-        // Current month payrolls
         $payrolls = Payroll::with('employee')
             ->where('month', $month)
             ->get();
 
-        // Previous month payrolls
         $previousMonthPayrolls = Payroll::with('employee')
             ->where('month', $previousMonth)
             ->get();
 
-        // Total funding (same as ReportController)
+        $availableMonths = Payroll::select('month')
+            ->distinct()
+            ->pluck('month')
+            ->sort()
+            ->values();
+
         $totalFunding = 10000000000 - Payroll::where('month', $month)
             ->join('transactions', 'payrolls.id', '=', 'transactions.payroll_id')
             ->where('transactions.status', 'completed')
@@ -42,12 +41,13 @@ public function dashboard(Request $request)
             'selectedMonth' => $month,
             'totalFunding' => $totalFunding,
             'previousMonthPayrolls' => $previousMonthPayrolls,
+            'availableMonths' => $availableMonths,
         ]);
     }
-     
+
+
     public function index(Request $request)
     {
-        // Get the month from query parameter, default to current month
         $month = $request->query('month', now()->format('Y-m'));
 
         // Validate month format (YYYY-MM)
@@ -55,55 +55,55 @@ public function dashboard(Request $request)
             $month = now()->format('Y-m');
         }
 
-        // Load payrolls for the selected month with employee data
+        // Fetch payrolls for the selected month
         $payrolls = Payroll::with([
             'employee' => function ($query) {
-                $query->select('id', 'name', 'employment_date', 'basic_salary');
+            $query->select('id', 'name', 'employment_date', 'basic_salary');
             }
         ])
             ->where('month', $month)
             ->get();
 
-        // Get available months for dropdown
+        // Fetch available months from employment_date
         $availableMonths = Payroll::select('month')
             ->distinct()
             ->orderBy('month', 'desc')
             ->pluck('month')
             ->toArray();
 
-        // Ensure current month is included if no payrolls exist
+        // Include current month if no payrolls exist
         if (empty($availableMonths) && !in_array($month, $availableMonths)) {
             $availableMonths[] = $month;
         }
 
-        // Calculate total funding (static initial funding minus completed transactions for the month)
-        $initialFunding = 10000000; // Adjust as needed
+        $initialFunding = 10000000;
         $completedFunding = Transaction::where('status', 'completed')
             ->whereIn('payroll_id', $payrolls->pluck('id'))
             ->selectRaw('SUM(amount + COALESCE(tax_amount, 0)) as total')
             ->value('total') ?? 0;
         $totalFunding = $initialFunding - $completedFunding;
 
-        // Log data for debugging
         Log::info('Payroll report data', [
             'month' => $month,
             'payrolls_count' => $payrolls->count(),
             'available_months' => $availableMonths,
             'total_funding' => $totalFunding,
             'completed_funding' => $completedFunding,
+            'user_id' => auth()->id(), // Log user ID to check for restrictions
         ]);
 
         return Inertia::render('Report/Index', [
             'payrolls' => $payrolls,
             'selectedMonth' => $month,
-            'availableMonths' => $availableMonths,
+            'availableMonths' => array_values(array_unique($availableMonths)), // Ensure unique months
             'totalFunding' => $totalFunding,
         ]);
     }
 
-    /**
-     * Export payroll report for the specified month.
-     */
+
+
+
+
     public function export(string $month, string $format = 'excel')
     {
         $payrolls = Payroll::where('month', $month)->with('employee')->get();

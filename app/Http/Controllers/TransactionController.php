@@ -11,12 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display all transactions across all payrolls.
-     */
     public function index()
     {
-        // Load all payrolls with their employees and transactions
         $payrolls = Payroll::with([
             'employee' => function ($query) {
                 $query->select('id', 'name');
@@ -26,18 +22,14 @@ class TransactionController extends Controller
             }
         ])->get();
 
-        // Static initial funding
-        $initialFunding = 10000000000; // Matches JSON data
+        $initialFunding = 10000000000;
 
-        // Calculate reduction for completed transactions
         $completedFunding = Transaction::where('status', 'completed')
             ->selectRaw('SUM(amount + COALESCE(tax_amount, 0)) as total')
             ->value('total') ?? 0;
 
-        // Total funding after reduction
         $totalFunding = $initialFunding - $completedFunding;
 
-        // Prepare transactions data for the UI
         $transactions = $payrolls->flatMap(function ($payroll) {
             return $payroll->transactions->map(function ($transaction) use ($payroll) {
                 return [
@@ -53,8 +45,6 @@ class TransactionController extends Controller
             });
         })->values()->toArray();
 
-   
-        // Prepare summary details
         $transactionDetails = [
             'total_amount' => $totalFunding,
             'withdrawal_date' => Transaction::latest()->first()?->created_at->format('F d, Y') ?? now()->format('F d, Y'),
@@ -67,9 +57,6 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Update the status of a transaction.
-     */
     public function updateStatus(Request $request, Transaction $transaction)
     {
         $validator = Validator::make($request->all(), [
@@ -77,7 +64,6 @@ class TransactionController extends Controller
         ]);
 
         if ($validator->fails()) {
-          
             return redirect()->back()->withErrors([
                 "transactions.{$transaction->id}.status" => $validator->errors()->first('status'),
             ])->withInput();
@@ -85,8 +71,6 @@ class TransactionController extends Controller
 
         try {
             $transaction->update(['status' => $request->status]);
-    
-
             return redirect()->route('Transaction.index')->with('success', 'Transaction status updated successfully');
         } catch (\Exception $e) {
             Log::error('Transaction status update failed', [
@@ -98,9 +82,6 @@ class TransactionController extends Controller
         }
     }
 
-    /**
-     * Display transactions for a specific payroll.
-     */
     public function show(Payroll $payroll)
     {
         $payroll->load([
@@ -111,12 +92,6 @@ class TransactionController extends Controller
                 $query->select('id', 'payroll_id', 'employee_account', 'tax_authority_account', 'amount', 'tax_amount', 'type', 'status', 'created_at');
             }
         ]);
-
-        // Log::info('Payroll show data', [
-        //     'payroll_id' => $payroll->id,
-        //     'transactions_count' => $payroll->transactions->count(),
-        //     'transactions' => $payroll->transactions->toArray(),
-        // ]);
 
         $transactionDetails = [
             'payroll_id' => $payroll->id,

@@ -7,14 +7,12 @@ export default function Index({ transactionDetails, transactions }) {
 
     console.log('Transaction/Index.jsx props:', { transactionDetails, transactions, serverErrors });
 
-    // Create a form instance for each transaction to manage status independently
     const forms = transactions.map((transaction) =>
         useForm({
-            status: '', // Initialize with empty string to match default "Change Status"
+            status: '', 
         })
     );
 
-    // Track client-side errors for each transaction
     const [transactionErrors, setTransactionErrors] = React.useState({});
 
     const handleStatusChange = (transactionId, index, event) => {
@@ -42,7 +40,7 @@ export default function Index({ transactionDetails, transactions }) {
             onSuccess: () => {
                 console.log('Request succeeded');
                 setTransactionErrors((prev) => ({ ...prev, [transactionId]: null }));
-                setData('status', ''); // Reset status to empty string for "Change Status"
+                setData('status', '');
             },
             onError: (errors) => {
                 console.error('Request failed', errors);
@@ -57,11 +55,9 @@ export default function Index({ transactionDetails, transactions }) {
         });
     };
 
-    // Combine server and client errors
     const getError = (transactionId) =>
         transactionErrors[transactionId] || serverErrors[`transactions.${transactionId}.status`];
 
-    // Capitalize status for display
     const capitalize = (str) => {
         if (!str) return '';
         return str.charAt(0).toUpperCase() + str.slice(1);

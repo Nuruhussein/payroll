@@ -7,7 +7,6 @@ export default function Show({ transactionDetails, transactions }) {
 
     console.log('Show.jsx props:', { transactionDetails, transactions });
 
-    // Capitalize status for display
     const capitalize = (str) => {
         if (!str) return '';
         return str.charAt(0).toUpperCase() + str.slice(1);
