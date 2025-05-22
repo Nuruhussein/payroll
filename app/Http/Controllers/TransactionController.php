@@ -70,7 +70,17 @@ class TransactionController extends Controller
         }
 
         try {
-            $transaction->update(['status' => $request->status]);
+            $transaction->update([
+                'status' => $request->status,
+                'approved_by' => $request->status === 'completed' ? auth()->user()->name : $transaction->approved_by,
+            ]);
+
+            // Update the related payroll's approved_by_status to 'approved'
+            if ($request->status === 'completed' && $transaction->payroll) {
+                $transaction->payroll->update([
+                    'approved_by' => $request->status === 'completed' ? auth()->user()->name : $transaction->payroll->approved_by,
+                ]);
+            }
             return redirect()->route('Transaction.index')->with('success', 'Transaction status updated successfully');
         } catch (\Exception $e) {
             Log::error('Transaction status update failed', [

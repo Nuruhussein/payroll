@@ -141,6 +141,7 @@ class ReportController extends Controller
                         'Gross Pay' => $payroll->gross_pay,
                         'Total Deduction' => $payroll->total_deduction,
                         'Net Payment' => $payroll->net_payment,
+                        
                     ];
                 });
             }

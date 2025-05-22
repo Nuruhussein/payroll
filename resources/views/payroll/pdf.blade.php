@@ -14,6 +14,15 @@
         .text-center { text-align: center; }
         .font-bold { font-weight: bold; }
         .text-green-700 { color: #15803d; }
+        .lop {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 10px;
+        }
+        .lop div { width: 45%; }
+        .lop p { margin: 4px 0; }
+        .lop .font-semibold { font-weight: bold; }
         tfoot tr { background-color: #f2f2f2; }
         /* Column widths */
         th:nth-child(1), td:nth-child(1) { width: 5%; } /* No. */
@@ -93,5 +102,19 @@
             </tr>
         </tfoot>
     </table>
+    <div class="lop">
+        <div>
+            <p class="font-semibold">Prepared by</p>
+            <p class="mt-4">Name: {{ $payrolls->first()->prepared_by ?? 'Payroll Admin' }}</p>
+            <p>Signature: ________________</p>
+            <p>Date: _____________________</p>
+        </div>
+        <div>
+            <p class="font-semibold">Approved by</p>
+            <p class="mt-4">Name: {{ $payrolls->first()->approved_by ?? 'N/A' }}</p>
+            <p>Signature: ________________</p>
+            <p>Date: _____________________</p>
+        </div>
+    </div>
 </body>
 </html>

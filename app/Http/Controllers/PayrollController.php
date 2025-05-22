@@ -107,6 +107,8 @@ class PayrollController extends Controller
                 'tax_amount' => $incomeTax,
                 'type' => 'salary',
                 'status' => 'pending',
+                 'preparedd_by' => auth()->user()->name ?? 'Payroll Admin',
+
             ]);
 
             DB::commit();

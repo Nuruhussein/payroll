@@ -8,7 +8,6 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
     const format = (num) =>
         Number(num).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-    // State for filters
     const [filters, setFilters] = React.useState({
         employeeName: '',
         minNetPayment: '',
@@ -16,10 +15,10 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
         workingDays: '',
     });
 
-    // State for filtered payrolls
+
     const [filteredPayrolls, setFilteredPayrolls] = React.useState(payrolls);
 
-    // Update filtered payrolls when filters or payrolls change
+
     React.useEffect(() => {
         const filtered = payrolls.filter((p) => {
             const nameMatch = filters.employeeName
@@ -39,13 +38,13 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
         setFilteredPayrolls(filtered);
     }, [filters, payrolls]);
 
-    // Handle filter changes
+ 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Clear filters
+
     const clearFilters = () => {
         setFilters({ employeeName: '', minNetPayment: '', maxNetPayment: '', workingDays: '' });
     };
@@ -110,7 +109,7 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
                     <p className="text-sm text-gray-600 mt-1">Payroll details for the selected month</p>
                 </div>
 
-                {/* Month Selector and Export */}
+              
                 <div className="mb-6 flex items-center space-x-4">
                     <div>
                         <label htmlFor="month" className="block text-sm font-medium text-gray-700">
@@ -129,7 +128,7 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
                             ))}
                         </select>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex mt-5 ml-2 space-x-2">
                         <button
                             onClick={() => handleExport('pdf')}
                             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
@@ -140,7 +139,7 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
                     </div>
                 </div>
 
-                {/* Filter Section */}
+          
                 <div className="mb-6 bg-white shadow-sm rounded-md p-6">
                     <h2 className="text-lg font-semibold mb-4">Filter Payrolls</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -198,13 +197,12 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
                     </div>
                 </div>
 
-                {/* Total Funding */}
+          
                 <div className="mb-6">
                     <p className="text-sm text-gray-500">Total Company Funding</p>
                     <p className="text-2xl font-bold text-gray-900">${format(totalFunding)}</p>
                 </div>
 
-                {/* Payroll Table */}
                 <div className="p-4 overflow-x-auto bg-white rounded-lg shadow-md mb-6">
                     {filteredPayrolls.length === 0 ? (
                         <div className="p-6 text-center text-gray-600">
@@ -277,7 +275,7 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
                     )}
                 </div>
 
-                {/* Payroll Chart */}
+              
                 <PayrollChart payrolls={payrolls} availableMonths={availableMonths} />
             </div>
         </Dashboard>

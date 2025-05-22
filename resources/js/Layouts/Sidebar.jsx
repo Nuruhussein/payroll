@@ -1,15 +1,19 @@
-
+import React from 'react'
+import { usePage } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import { useState } from 'react';
 const Sidebar = () => {
 
-    const navigation = [
+    const { auth } = usePage().props;
+    console.log(auth)
 
+    const navigation = [
         {
             href: '/adminDashboard',
             name: 'Dashboard',
             icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
   <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM14 14h7v7h-7v-7zM3 14h7v7H3v-7z" />
 </svg>
-
         },
         {
             href: '/employees',
@@ -18,8 +22,6 @@ const Sidebar = () => {
   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
   <path strokeLinecap="round" strokeLinejoin="round" d="M4 20a7 7 0 0114 0H4z" />
 </svg>
-
-            ,
         },
         {
             href: '/Payroll',
@@ -27,28 +29,27 @@ const Sidebar = () => {
             icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
   <path strokeLinecap="round" strokeLinejoin="round" d="M4 7V3h16v4H4zm0 4h16v10H4V11zm4 4v4m4-4v4m4-4v4" />
 </svg>
-
-            ,
         },
-        {
-            href: '/Transaction',
-            name: 'Transaction',
-            icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+        ...(auth.user.role === 'admin'
+            ? [
+                {
+                    href: '/Transaction',
+                    name: 'Transaction',
+                    icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25M15.75 5.25L18 7.5M15.75 5.25L13.5 7.5M8.25 15V18.75M8.25 18.75L6 16.5M8.25 18.75L10.5 16.5" />
 </svg>
-
-
-            ,
-        },
-        {
-            href: '/Report',
-            name: 'Report',
-            icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                },
+                {
+                    href: '/Report',
+                    name: 'Report',
+                    icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 4.5H7A2.25 2.25 0 014.75 18V6A2.25 2.25 0 017 3.75h6.379a2.25 2.25 0 011.591.659l3.621 3.621a2.25 2.25 0 01.659 1.591V18A2.25 2.25 0 0117.25 20.25z" />
 </svg>
-
-        }
-    ]
+                }
+            ]
+            : []
+        )
+    ];
 
     const navsFooter = [
         {
