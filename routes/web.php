@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ReportController;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -25,19 +27,28 @@ Route::middleware('auth')->group(function () {
 });
     
 
-    Route::get('/Payroll/create', [\App\Http\Controllers\PayrollController::class, 'create'])->name('Payroll.create');
-    Route::get('/employee/create', [\App\Http\Controllers\EmployeeController::class, 'create'])->name('employees.create');
+
+
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('employees', \App\Http\Controllers\EmployeeController::class)->except(['create']);
-    Route::resource('report', \App\Http\Controllers\ReportController::class)->except(['create']);
+    Route::get('/Payroll/create', [\App\Http\Controllers\PayrollController::class, 'create'])->name('Payroll.create');
+    Route::get('/employee/create', [\App\Http\Controllers\EmployeeController::class, 'create'])->name('employees.create');
+   Route::get('/Report/export/{month}/{format}', [ReportController::class, 'export'])->name('Report.export');
+    Route::resource('Report', \App\Http\Controllers\ReportController::class)->except(['create','export']);
+   
 
+
+Route::get('/adminDashboard', [ReportController::class, 'dashboard'])->name('report.dashboard');
     Route::resource('Payroll', \App\Http\Controllers\PayrollController::class)->except(['create']);
 
  Route::get('/Transaction', [TransactionController::class, 'index'])->name('Transaction.index');
+Route::put('/transactions/{transaction}/status', [\App\Http\Controllers\TransactionController::class, 'updateStatus'])->name('Transaction.updateStatus');
+
     Route::get('/Transaction/{payroll}', [TransactionController::class, 'show'])->name('Transaction.show');
-    
-     Route::post('/Transaction/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('updateStatus');
+
+    //  Route::post('/Transaction/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('updateStatus');
 });
 
 require __DIR__.'/auth.php';

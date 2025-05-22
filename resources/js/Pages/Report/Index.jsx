@@ -1,26 +1,32 @@
 import React from 'react';
 import Dashboard from '../Dashboard';
 import { router } from '@inertiajs/react';
+import { route } from 'ziggy-js';
 
 export default function ReportIndex({ payrolls, selectedMonth, availableMonths, totalFunding }) {
-   
     const format = (num) =>
         Number(num).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-   
     const handleMonthChange = (e) => {
         const month = e.target.value;
         router.get(route('Report.index'), { month }, { preserveState: true, replace: true });
     };
 
-
-    const handleExport = (format) => {
-        window.location.href = route('Report.export', { month: selectedMonth, format });
+    const handleExport = (formatType) => {
+        try {
+            // Debug available routes safely
+            if (typeof window !== 'undefined' && window.Ziggy && window.Ziggy.routes) {
+                console.log('Available Ziggy routes:', window.Ziggy.routes);
+            }
+            const url = route('Report.export', { month: selectedMonth, format: formatType });
+            console.log('Generated export URL:', url);
+            window.location.href = url;
+        } catch (error) {
+            console.error('Export failed:', error);
+            alert('Failed to export report. Please ensure the export feature is available or contact support.');
+        }
     };
 
-
-
-    
     const totals = payrolls.reduce(
         (acc, p) => {
             acc.earned_salary += Number(p.earned_salary);
@@ -80,15 +86,17 @@ export default function ReportIndex({ payrolls, selectedMonth, availableMonths, 
                         </select>
                     </div>
                     <div className="flex space-x-2">
-                        <button
+                        {/* <button
                             onClick={() => handleExport('excel')}
-                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400"
+                            disabled={!payrolls.length}
                         >
                             Export to Excel
-                        </button>
+                        </button> */}
                         <button
                             onClick={() => handleExport('pdf')}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            className="px-4 py-2 mt-6  bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+                            disabled={!payrolls.length}
                         >
                             Export to PDF
                         </button>

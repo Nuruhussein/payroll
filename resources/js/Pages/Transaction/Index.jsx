@@ -1,25 +1,70 @@
 import React from 'react';
 import Dashboard from '../Dashboard';
-import {  usePage, useForm } from '@inertiajs/react';
+import { usePage, useForm } from '@inertiajs/react';
 
 export default function Index({ transactionDetails, transactions }) {
-    const { flash } = usePage().props;
+    const { flash, errors: serverErrors } = usePage().props;
 
-    console.log('Transaction/Index.jsx props:', { transactionDetails, transactions });
+    console.log('Transaction/Index.jsx props:', { transactionDetails, transactions, serverErrors });
 
-    // Form for status update
-    const { data, setData, post, processing, errors } = useForm({
-        status: '',
-    });
+    // Create a form instance for each transaction to manage status independently
+    const forms = transactions.map((transaction) =>
+        useForm({
+            status: '', // Initialize with empty string to match default "Change Status"
+        })
+    );
 
-    const handleStatusChange = (transactionId, status) => {
-        post(route('Transaction.updateStatus', transactionId), {
-            data: { status },
-            onSuccess: () => {
-                setData('status', '');
-            },
+    // Track client-side errors for each transaction
+    const [transactionErrors, setTransactionErrors] = React.useState({});
+
+    const handleStatusChange = (transactionId, index, event) => {
+        event.preventDefault();
+        const { data, put, processing, setData } = forms[index];
+
+        console.log('handleStatusChange called', { transactionId, status: data.status, index });
+
+        if (!data.status || data.status === '') {
+            console.log('No status selected');
+            setTransactionErrors((prev) => ({
+                ...prev,
+                [transactionId]: 'Please select a status.',
+            }));
+            return;
+        }
+
+        setTransactionErrors((prev) => ({ ...prev, [transactionId]: null }));
+
+        console.log('Sending PUT request', { transactionId, status: data.status });
+
+        put(route('Transaction.updateStatus', transactionId), {
+            preserveState: true,
             preserveScroll: true,
+            onSuccess: () => {
+                console.log('Request succeeded');
+                setTransactionErrors((prev) => ({ ...prev, [transactionId]: null }));
+                setData('status', ''); // Reset status to empty string for "Change Status"
+            },
+            onError: (errors) => {
+                console.error('Request failed', errors);
+                setTransactionErrors((prev) => ({
+                    ...prev,
+                    [transactionId]: errors.status || 'Failed to update status.',
+                }));
+            },
+            onFinish: () => {
+                console.log('Request finished');
+            },
         });
+    };
+
+    // Combine server and client errors
+    const getError = (transactionId) =>
+        transactionErrors[transactionId] || serverErrors[`transactions.${transactionId}.status`];
+
+    // Capitalize status for display
+    const capitalize = (str) => {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
     };
 
     return (
@@ -54,9 +99,6 @@ export default function Index({ transactionDetails, transactions }) {
                         <p className="text-sm text-gray-500">Funding Account</p>
                         <p className="text-gray-900 mt-1">Company Account</p>
                     </div>
-                    <div className="flex items-center">
-                        <span className="bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">{transactionDetails.status}</span>
-                    </div>
                 </div>
 
                 <div className="mb-8">
@@ -81,7 +123,7 @@ export default function Index({ transactionDetails, transactions }) {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 text-sm">
                                     {transactions.map((transaction, index) => (
-                                        <tr key={index}>
+                                        <tr key={transaction.id}>
                                             <td className="px-6 py-4 text-blue-600 font-medium">{transaction.recipient}</td>
                                             <td className="px-6 py-4">{transaction.deposit_date}</td>
                                             <td className="px-6 py-4">${transaction.amount}</td>
@@ -91,19 +133,33 @@ export default function Index({ transactionDetails, transactions }) {
                                                 <span className="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">{transaction.status}</span>
                                             </td>
                                             <td className="px-6 py-4 flex space-x-2">
-                                                <select
-                                                    value={data.status}
-                                                    onChange={(e) => handleStatusChange(transaction.id, e.target.value)}
-                                                    className="border border-gray-300 rounded px-2 py-1 text-sm"
-                                                    disabled={processing}
+                                                <form
+                                                    onSubmit={(e) => handleStatusChange(transaction.id, index, e)}
+                                                    className="flex items-center space-x-2"
                                                 >
-                                                    <option value="">Change Status</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="completed">Completed</option>
-                                                    <option value="failed">Failed</option>
-                                                </select>
+                                                    <select
+                                                        value={forms[index].data.status}
+                                                        onChange={(e) => forms[index].setData('status', e.target.value)}
+                                                        className="border border-gray-300 rounded px-2 py-1 text-sm"
+                                                        disabled={forms[index].processing}
+                                                    >
+                                                        <option value="">Change Status</option>
+                                                        <option value="completed">Completed</option>
+                                                        <option value="failed">Failed</option>
+                                                    </select>
+                                                    <button
+                                                        type="submit"
+                                                        className="inline-flex items-center px-4 py-1 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+                                                        disabled={forms[index].processing}
+                                                    >
+                                                        Update
+                                                    </button>
+                                                </form>
+                                                {getError(transaction.id) && (
+                                                    <p className="text-red-600 text-sm">{getError(transaction.id)}</p>
+                                                )}
                                                 <a
-                                                    href={route('Payroll.show', transaction.payroll_id)}
+                                                    href={route('Transaction.show', transaction.payroll_id)}
                                                     className="text-blue-600 font-medium"
                                                 >
                                                     Details

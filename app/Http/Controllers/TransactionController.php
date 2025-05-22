@@ -27,7 +27,7 @@ class TransactionController extends Controller
         ])->get();
 
         // Static initial funding
-        $initialFunding = 10000000; // Adjust as needed (e.g., 10,000,000 USD)
+        $initialFunding = 10000000000; // Matches JSON data
 
         // Calculate reduction for completed transactions
         $completedFunding = Transaction::where('status', 'completed')
@@ -41,7 +41,7 @@ class TransactionController extends Controller
         $transactions = $payrolls->flatMap(function ($payroll) {
             return $payroll->transactions->map(function ($transaction) use ($payroll) {
                 return [
-                    'id' => $transaction->id, // For status updates
+                    'id' => $transaction->id,
                     'payroll_id' => $payroll->id,
                     'recipient' => $payroll->employee ? $payroll->employee->name : 'Unknown',
                     'deposit_date' => $payroll->created_at->endOfMonth()->format('M d, Y'),
@@ -53,16 +53,7 @@ class TransactionController extends Controller
             });
         })->values()->toArray();
 
-        // Log data for debugging
-        Log::info('Transaction index data', [
-            'payrolls_count' => $payrolls->count(),
-            'transactions_count' => count($transactions),
-            'initial_funding' => $initialFunding,
-            'completed_funding' => $completedFunding,
-            'total_funding' => $totalFunding,
-            'transactions' => $transactions,
-        ]);
-
+   
         // Prepare summary details
         $transactionDetails = [
             'total_amount' => $totalFunding,
@@ -86,21 +77,23 @@ class TransactionController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+          
+            return redirect()->back()->withErrors([
+                "transactions.{$transaction->id}.status" => $validator->errors()->first('status'),
+            ])->withInput();
         }
 
         try {
             $transaction->update(['status' => $request->status]);
-            Log::info('Transaction status updated', [
-                'transaction_id' => $transaction->id,
-                'new_status' => $request->status,
-            ]);
+    
+
             return redirect()->route('Transaction.index')->with('success', 'Transaction status updated successfully');
         } catch (\Exception $e) {
             Log::error('Transaction status update failed', [
                 'transaction_id' => $transaction->id,
                 'message' => $e->getMessage(),
             ]);
+
             return redirect()->back()->with('error', 'Failed to update transaction status');
         }
     }
@@ -119,11 +112,11 @@ class TransactionController extends Controller
             }
         ]);
 
-        Log::info('Payroll show data', [
-            'payroll_id' => $payroll->id,
-            'transactions_count' => $payroll->transactions->count(),
-            'transactions' => $payroll->transactions->toArray(),
-        ]);
+        // Log::info('Payroll show data', [
+        //     'payroll_id' => $payroll->id,
+        //     'transactions_count' => $payroll->transactions->count(),
+        //     'transactions' => $payroll->transactions->toArray(),
+        // ]);
 
         $transactionDetails = [
             'payroll_id' => $payroll->id,

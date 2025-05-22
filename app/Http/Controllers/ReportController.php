@@ -15,6 +15,36 @@ class ReportController extends Controller
     /**
      * Display monthly payroll report.
      */
+
+public function dashboard(Request $request)
+    {
+        $month = $request->input('month', now()->format('Y-m'));
+        $previousMonth = now()->subMonth()->format('Y-m');
+
+        // Current month payrolls
+        $payrolls = Payroll::with('employee')
+            ->where('month', $month)
+            ->get();
+
+        // Previous month payrolls
+        $previousMonthPayrolls = Payroll::with('employee')
+            ->where('month', $previousMonth)
+            ->get();
+
+        // Total funding (same as ReportController)
+        $totalFunding = 10000000000 - Payroll::where('month', $month)
+            ->join('transactions', 'payrolls.id', '=', 'transactions.payroll_id')
+            ->where('transactions.status', 'completed')
+            ->sum('transactions.amount');
+
+        return inertia('adminDashboard/Index', [
+            'payrolls' => $payrolls,
+            'selectedMonth' => $month,
+            'totalFunding' => $totalFunding,
+            'previousMonthPayrolls' => $previousMonthPayrolls,
+        ]);
+    }
+     
     public function index(Request $request)
     {
         // Get the month from query parameter, default to current month
