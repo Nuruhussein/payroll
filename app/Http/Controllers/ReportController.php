@@ -50,12 +50,12 @@ class ReportController extends Controller
     {
         $month = $request->query('month', now()->format('Y-m'));
 
-        // Validate month format (YYYY-MM)
+  
         if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
             $month = now()->format('Y-m');
         }
 
-        // Fetch payrolls for the selected month
+
         $payrolls = Payroll::with([
             'employee' => function ($query) {
             $query->select('id', 'name', 'employment_date', 'basic_salary');
@@ -64,14 +64,13 @@ class ReportController extends Controller
             ->where('month', $month)
             ->get();
 
-        // Fetch available months from employment_date
         $availableMonths = Payroll::select('month')
             ->distinct()
             ->orderBy('month', 'desc')
             ->pluck('month')
             ->toArray();
 
-        // Include current month if no payrolls exist
+   
         if (empty($availableMonths) && !in_array($month, $availableMonths)) {
             $availableMonths[] = $month;
         }
@@ -89,13 +88,13 @@ class ReportController extends Controller
             'available_months' => $availableMonths,
             'total_funding' => $totalFunding,
             'completed_funding' => $completedFunding,
-            'user_id' => auth()->id(), // Log user ID to check for restrictions
+            'user_id' => auth()->id(), 
         ]);
 
         return Inertia::render('Report/Index', [
             'payrolls' => $payrolls,
             'selectedMonth' => $month,
-            'availableMonths' => array_values(array_unique($availableMonths)), // Ensure unique months
+            'availableMonths' => array_values(array_unique($availableMonths)), 
             'totalFunding' => $totalFunding,
         ]);
     }
@@ -141,7 +140,7 @@ class ReportController extends Controller
                         'Gross Pay' => $payroll->gross_pay,
                         'Total Deduction' => $payroll->total_deduction,
                         'Net Payment' => $payroll->net_payment,
-                        
+
                     ];
                 });
             }

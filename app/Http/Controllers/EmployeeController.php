@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
     public function index()
     {
         $employees = Employee::all();
-        return inertia('employee/Index', ['employees' => $employees]);
+        return inertia('employee/Index', [
+            'employees' => $employees,
+            'auth' => ['user' => ['role' => auth()->user()->role]],
+        ]);
     }
 
     public function create()
@@ -33,7 +34,10 @@ class EmployeeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return inertia('employee/Create', [
+                'errors' => $validator->errors(),
+                'old' => request()->all(),
+            ]);
         }
 
         $employee = Employee::create([
@@ -46,7 +50,11 @@ class EmployeeController extends Controller
             'bank_account_number' => request('bank_account_number'),
         ]);
 
-        return redirect()->route('employees.index')->with('success', 'Employee created successfully');
+        return inertia('employee/Index', [
+            'employees' => Employee::all(),
+            'success' => 'Employee created successfully',
+            'auth' => ['user' => ['role' => auth()->user()->role]],
+        ]);
     }
 
     public function show(Employee $employee)
@@ -72,19 +80,31 @@ class EmployeeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return inertia('employee/Edit', [
+                'employee' => $employee,
+                'errors' => $validator->errors(),
+                'old' => request()->all(),
+            ]);
         }
 
         $employee->update(request()->only([
             'name', 'gender', 'employment_type', 'position', 'employment_date', 'basic_salary', 'bank_account_number'
         ]));
 
-        return redirect()->route('employees.index')->with('success', 'Employee updated successfully');
+        return inertia('employee/Index', [
+            'employees' => Employee::all(),
+            'success' => 'Employee updated successfully',
+            'auth' => ['user' => ['role' => auth()->user()->role]],
+        ]);
     }
 
     public function destroy(Employee $employee)
     {
         $employee->delete();
-        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully');
+        return inertia('employee/Index', [
+            'employees' => Employee::all(),
+            'success' => 'Employee deleted successfully',
+            'auth' => ['user' => ['role' => auth()->user()->role]],
+        ]);
     }
 }

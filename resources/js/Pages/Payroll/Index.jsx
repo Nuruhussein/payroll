@@ -1,7 +1,14 @@
 import Dashboard from "../Dashboard";
 import { Link } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 
 export default ({ payrolls }) => {
+    const handleDelete = (id) => {
+        if (confirm("Are you sure you want to delete this payroll?")) {
+            router.delete(`/Payroll/${id}`);
+        }
+    };
+
     return (
         <Dashboard>
             <div className="max-w-5xl ml-60 px-4 md:px-8">
@@ -82,6 +89,7 @@ export default ({ payrolls }) => {
                                             view
                                         </a>
                                         <button
+                                            onClick={() => handleDelete(item.id)}
                                             className="py-2 leading-none px-3 font-medium text-red-600 hover:text-red-500 duration-150 hover:bg-gray-50 rounded-lg"
                                         >
                                             Delete

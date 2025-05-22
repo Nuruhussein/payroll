@@ -143,4 +143,19 @@ class PayrollController extends Controller
         $payroll->load('employee', 'transactions');
         return inertia('Payroll/Show', ['payroll' => $payroll]);
     }
+ 
+    
+    public function destroy(Payroll $payroll)
+    {
+        try {
+            DB::beginTransaction();
+            $payroll->delete();
+            Transaction::where('payroll_id', $payroll->id)->delete();
+            DB::commit();
+            return redirect()->route('Payroll.index')->with('success', 'Payroll deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to delete payroll');
+        }
+    }
 }
